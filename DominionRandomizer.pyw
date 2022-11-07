@@ -59,11 +59,11 @@ def MakeSupply(optionDict):#サプライ生成のメイン関数
             if card.attack==1:
                 attackCount += 1
             if card.action2==1:
-              action2Count += 1
+                action2Count += 1
             if card.cost<=3:
                 LowCostsCount+= 1
             if card.cost>=5:
-               HighCostsCount+= 1
+                HighCostsCount+= 1
             EachSetCount[SetDict[card.exset]]+=1
         
         if attackCount>=attackNeed:
@@ -94,8 +94,9 @@ def MakeSupply(optionDict):#サプライ生成のメイン関数
     for i in range(4):
         CardString =''
         for j in showSupply[i]:
-            CardString += '   ' + j
-        showtext += str(list(SetDict)[i]) + ' :' + CardString + '\n\n\n'
+            CardString += '  ' + j
+        if CardString !='':
+            showtext += str(list(SetDict)[i]) + ':' + CardString + '\n\n\n'
     
     if txtBox.get('1.0',tk.END):
         txtBox.delete('1.0',tk.END)
@@ -109,13 +110,13 @@ for i in range(4):
     VarExsetList.append(tk.BooleanVar())
     VarExsetList[i].set(1)
 
-CheckBox1 = tk.Checkbutton(text=u"基本",variable=VarExsetList[0])
+CheckBox1 = tk.Checkbutton(text="基本",variable=VarExsetList[0])
 CheckBox1.place(x=25, y=40)
-CheckBox2 = tk.Checkbutton(text=u"陰謀",variable=VarExsetList[1])
+CheckBox2 = tk.Checkbutton(text="陰謀",variable=VarExsetList[1])
 CheckBox2.place(x=25, y=70)
-CheckBox3 = tk.Checkbutton(text=u"海辺",variable=VarExsetList[2])
+CheckBox3 = tk.Checkbutton(text="海辺",variable=VarExsetList[2])
 CheckBox3.place(x=25, y=100)
-CheckBox4 = tk.Checkbutton(text=u"異郷",variable=VarExsetList[3])
+CheckBox4 = tk.Checkbutton(text="異郷",variable=VarExsetList[3])
 CheckBox4.place(x=25, y=130)
 
 label2 = tk.Label(root, text="最低枚数")
