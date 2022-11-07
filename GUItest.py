@@ -99,16 +99,12 @@ def MakeSupply(optionDict):#サプライ生成のメイン関数
         CardString =''
         for j in showSupply[i]:
             CardString += '   ' + j
-        print(str(list(SetDict)[i]) + ' :' + CardString)
         showtext += str(list(SetDict)[i]) + ' :' + CardString + '\n\n\n'
     
     if txtBox.get('1.0',tk.END):
         txtBox.delete('1.0',tk.END)
-
     txtBox.insert(tk.END,showtext)
 
-
-#Label部品を作る
 label = tk.Label(root, text="使用する拡張")
 label.place(x=20, y=15)
 
@@ -138,7 +134,6 @@ for i in range(4):
     spinboxList.append(tk.Spinbox(root,width=3, from_=0, to=6, increment=1, textvariable=VarspinboxList[i]))
     spinboxList[i].place(x=140, y=45+i*30)
 
-
 def optionToDict():
 
     SetDict = {'基本':0,'陰謀':1,'海辺':2,'異郷':3}
@@ -154,7 +149,8 @@ def optionToDict():
         if txtBox.get('1.0',tk.END):
                 txtBox.delete('1.0',tk.END)
         txtBox.insert(tk.END,'どのセットも選択されてないよ・・・')
-        return   
+        return
+    optionDict['selectSetList']=returnList   
     
     #枚数指定の取得
     SetNeedList=[]
@@ -162,11 +158,11 @@ def optionToDict():
         SetNeedList.append(int(VarspinboxList[i].get()))
     optionDict['EachSetNeed']=SetNeedList
 
-    
-    optionDict['selectSetList']=returnList
+    #アタック、アクションの最低枚数指定
     optionDict['attackNeed']=attack.get()
     optionDict['action2Need']=action2.get()
 
+    #コストバランスの指定
     if cost.get()==0:
         optionDict['LowCostsNeed']=0
         optionDict['HighCostsNeed']=0
@@ -179,13 +175,8 @@ def optionToDict():
     elif cost.get()==3:
         optionDict['LowCostsNeed']=3
         optionDict['HighCostsNeed']=3    
-
     
-    MakeSupply(optionDict)   
-
-def txtinsert():
-    txtBox.insert(tk.END,'1234')
-
+    MakeSupply(optionDict) #Dictを引数で渡し、検索起動
 
 #ボタン
 button2 = tk.Button(root, text="サプライ生成",width=25,height=3, command= lambda : optionToDict())
