@@ -1,9 +1,7 @@
-from google.colab import drive
-drive.mount('/content/drive')
 
 import pandas as pd 
 import random
-data= pd.read_csv('drive/My Drive/Colab Notebooks/pytest.csv' , encoding="shift-jis")
+data= pd.read_csv('pytest.csv' , encoding="shift-jis")
 data.head()
 
 class Card:
@@ -20,7 +18,7 @@ selectSetList = ['海辺','基本','異郷','陰謀']#抽選対象の拡張セ�
 attackNeed = 3#アタックの最低枚数
 action2Need = 1#+2アクションの最低枚数
 LowCostsNeed = 3#コスト3以下の最低枚数
-HighCostsNeed = 3#コスト5以上の最低枚数
+HighCostsNeed = 3#コスト5以上の最低枚
 EachSetNeed = [0,0,0,5]#各セットの最低枚数]
 SetDict = {'基本':0,'陰謀':1,'海辺':2,'異郷':3}
 
