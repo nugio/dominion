@@ -4,10 +4,6 @@ import tkinter as tk
 import pandas as pd 
 import random
 
-def pushed(b):
- b["text"] = "pushed"
- ChecksListUp()
-
 #rootウィンドウを作成
 root = tk.Tk()
 root.title("ドミニオン　サプライ生成")
@@ -59,16 +55,16 @@ def MakeSupply(optionDict):#サプライ生成のメイン関数
         HighCostsCount = 0
         EachSetCount = [0,0,0,0]
 
-        for i in Supply:
-            if i.attack==1:
+        for card in Supply:
+            if card.attack==1:
                 attackCount += 1
-            if i.action2==1:
+            if card.action2==1:
               action2Count += 1
-            if i.cost<=3:
+            if card.cost<=3:
                 LowCostsCount+= 1
-            if i.cost>=5:
+            if card.cost>=5:
                HighCostsCount+= 1
-            EachSetCount[SetDict[i.exset]]+=1
+            EachSetCount[SetDict[card.exset]]+=1
         
         if attackCount>=attackNeed:
             if action2Count>=action2Need:
@@ -89,10 +85,10 @@ def MakeSupply(optionDict):#サプライ生成のメイン関数
 
     showSupply=[[],[],[],[]]
 
-    for i in Supply:
+    for card in Supply:
         for j in range(4):
-            if SetDict[i.exset]==j:
-               showSupply[j].append(i.name + '(' + str(i.cost) + ')' )
+            if SetDict[card.exset]==j:
+               showSupply[j].append(card.name + '(' + str(card.cost) + ')' )
 
     showtext =''
     for i in range(4):
@@ -178,7 +174,7 @@ def optionToDict():
     
     MakeSupply(optionDict) #Dictを引数で渡し、検索起動
 
-#ボタン
+#サプライ生成ボタン
 button2 = tk.Button(root, text="サプライ生成",width=25,height=3, command= lambda : optionToDict())
 button2.place(x=300, y=160)
 
@@ -220,7 +216,6 @@ cost3.place(x=430, y=80)
 cost4 = tk.Radiobutton(root, value=3, variable=cost, text='バランス     (ともに最低3枚)')
 cost4.place(x=430, y=100)
 
-
 label = tk.Label(root, text="サプライ")
 label.place(x=10, y=200)
 
@@ -230,13 +225,6 @@ txtBox.place(x=10, y=230)
 
 #メインループ
 root.mainloop()
-
-def supplytest(joken):
-    if joken==1:
-        return '1です'
-    elif joken==2:
-        return '2です'
-
 
 
 
