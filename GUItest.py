@@ -4,7 +4,6 @@ import tkinter as tk
 import pandas as pd 
 import random
 
-
 def pushed(b):
  b["text"] = "pushed"
  ChecksListUp()
@@ -12,11 +11,12 @@ def pushed(b):
 #rootウィンドウを作成
 root = tk.Tk()
 #rootウィンドウのタイトルを変える
-root.title("Tkinterテスト")
+root.title("ドミニオン　サプライ生成")
 #rootウィンドウの大きさを320x240に
-root.geometry("500x500")
+root.geometry("800x450")
 
-def MakeSupply():
+
+def MakeSupply(optionDict):#サプライ生成のメイン関数
     
     data= pd.read_csv('pytest.csv' , encoding="shift-jis")
 
@@ -29,14 +29,13 @@ def MakeSupply():
             self.action2 = action2
             self.attack = attack
 
-
     MotherSupply = []
-    selectSetList = ['海辺','基本','異郷','陰謀']#抽選対象の拡張セット
-    attackNeed = 3#アタックの最低枚数
-    action2Need = 1#+2アクションの最低枚数
-    LowCostsNeed = 3#コスト3以下の最低枚数
-    HighCostsNeed = 3#コスト5以上の最低枚
-    EachSetNeed = [0,0,0,5]#各セットの最低枚数]
+    selectSetList = optionDict['selectSetList']#抽選対象の拡張セット
+    attackNeed = optionDict['attackNeed']#アタックの最低枚数
+    action2Need = optionDict['action2Need']#+2アクションの最低枚数
+    LowCostsNeed = optionDict['LowCostsNeed']#コスト3以下の最低枚数
+    HighCostsNeed = optionDict['HighCostsNeed']#コスト5以上の最低枚
+    EachSetNeed = optionDict['EachSetNeed']#各セットの最低枚数]
     SetDict = {'基本':0,'陰謀':1,'海辺':2,'異郷':3}
 
     for data in data.itertuples():
@@ -45,9 +44,10 @@ def MakeSupply():
 
     dataSize = len(MotherSupply)
     choiseSize = 10#サプライ生成枚数
-    print('総データ：'+ str(dataSize) + '  選択数: ' + str(choiseSize))
+    #print('総データ：'+ str(dataSize) + '  選択数: ' + str(choiseSize))
 
     finish = False
+    tryCount = 0
 
     while finish == False:
         Supply =[]
@@ -82,6 +82,15 @@ def MakeSupply():
                                 break
                             if i == 3:
                                 finish = True
+        tryCount+=1
+
+        if tryCount>200:
+            if txtBox.get('1.0',tk.END):
+                txtBox.delete('1.0',tk.END)
+            txtBox.insert(tk.END,'その組み合わせは無いみたい・・・')
+            return            
+
+
 
     showSupply=[[],[],[],[]]
 
@@ -90,51 +99,148 @@ def MakeSupply():
             if SetDict[i.exset]==j:
                showSupply[j].append(i.name + '(' + str(i.cost) + ')' )
 
-
+    showtext =''
     for i in range(4):
         CardString =''
         for j in showSupply[i]:
             CardString += '   ' + j
         print(str(list(SetDict)[i]) + ' :' + CardString)
+        showtext += str(list(SetDict)[i]) + ' :' + CardString + '\n\n\n'
+    
+    if txtBox.get('1.0',tk.END):
+        txtBox.delete('1.0',tk.END)
+
+    txtBox.insert(tk.END,showtext)
 
 
 #Label部品を作る
-label = tk.Label(root, text="Tkinterのテストです")
-label.pack()
+label = tk.Label(root, text="使用する拡張")
+label.place(x=20, y=15)
 
 VarExsetList =[]
 for i in range(4):
     VarExsetList.append(tk.BooleanVar())
+    VarExsetList[i].set(1)
 
 CheckBox1 = tk.Checkbutton(text=u"基本",variable=VarExsetList[0])
-CheckBox1.pack()
+CheckBox1.place(x=25, y=40)
 CheckBox2 = tk.Checkbutton(text=u"陰謀",variable=VarExsetList[1])
-CheckBox2.pack()
+CheckBox2.place(x=25, y=70)
 CheckBox3 = tk.Checkbutton(text=u"海辺",variable=VarExsetList[2])
-CheckBox3.pack()
+CheckBox3.place(x=25, y=100)
 CheckBox4 = tk.Checkbutton(text=u"異郷",variable=VarExsetList[3])
-CheckBox4.pack()
+CheckBox4.place(x=25, y=130)
 
-def ChecksListUp():
+label2 = tk.Label(root, text="最低枚数")
+label2.place(x=130, y=15)
+
+#枚数指定スピンボックス
+VarspinboxList =[]
+spinboxList=[]
+for i in range(4):
+    VarspinboxList.append(tk.StringVar())
+    VarspinboxList[i].set(0)
+    spinboxList.append(tk.Spinbox(root,width=3, from_=0, to=6, increment=1, textvariable=VarspinboxList[i]))
+    spinboxList[i].place(x=140, y=45+i*30)
+
+
+def optionToDict():
+
+    SetDict = {'基本':0,'陰謀':1,'海辺':2,'異郷':3}
+    revSetDict = {0:'基本',1:'陰謀',2:'海辺',3:'異郷'}
+    optionDict = {}
+
+    #抽選対象セットを取得
     returnList = []
     for i in range(4):
         if VarExsetList[i].get() == True:
-            returnList.append(1)
-        else:
-            returnList.append(0)        
-    print(returnList)
+            returnList.append(revSetDict[i])  
+    if returnList==[]:
+        if txtBox.get('1.0',tk.END):
+                txtBox.delete('1.0',tk.END)
+        txtBox.insert(tk.END,'どのセットも選択されてないよ・・・')
+        return   
+    
+    #枚数指定の取得
+    SetNeedList=[]
+    for i in range(4):
+        SetNeedList.append(int(VarspinboxList[i].get()))
+    optionDict['EachSetNeed']=SetNeedList
 
     
+    optionDict['selectSetList']=returnList
+    optionDict['attackNeed']=attack.get()
+    optionDict['action2Need']=action2.get()
 
-#ボタンを作る
-button = tk.Button(root, text="チェック読み", command= lambda : pushed(button))
-#表示
-button.pack()
+    if cost.get()==0:
+        optionDict['LowCostsNeed']=0
+        optionDict['HighCostsNeed']=0
+    elif cost.get()==1:
+        optionDict['LowCostsNeed']=4
+        optionDict['HighCostsNeed']=0
+    elif cost.get()==2:
+        optionDict['LowCostsNeed']=0
+        optionDict['HighCostsNeed']=4
+    elif cost.get()==3:
+        optionDict['LowCostsNeed']=3
+        optionDict['HighCostsNeed']=3    
+
+    
+    MakeSupply(optionDict)   
+
+def txtinsert():
+    txtBox.insert(tk.END,'1234')
 
 
-#ボタン2
-button2 = tk.Button(root, text="サプライ生成", command= lambda : MakeSupply())
-button2.pack()
+#ボタン
+button2 = tk.Button(root, text="サプライ生成",width=25,height=3, command= lambda : optionToDict())
+button2.place(x=300, y=160)
+
+# +2アクションのラジオボタン
+action2 = tk.IntVar()
+action2.set(0)# 初期値value=0
+label = tk.Label(root, text="+2アクション")
+label.place(x=230, y=15)
+act1 = tk.Radiobutton(root, value=0, variable=action2, text='何でも')
+act1.place(x=230, y=40)
+act2 = tk.Radiobutton(root, value=1, variable=action2, text='含む')
+act2.place(x=230, y=60)
+act3 = tk.Radiobutton(root, value=2, variable=action2, text='多め')
+act3.place(x=230, y=80)
+
+# アタックのラジオボタン
+attack = tk.IntVar()
+attack.set(0)# 初期値value=0
+label = tk.Label(root, text="アタック")
+label.place(x=330, y=15)
+atk1 = tk.Radiobutton(root, value=0, variable=attack, text='何でも')
+atk1.place(x=330, y=40)
+atk2 = tk.Radiobutton(root, value=1, variable=attack, text='含む')
+atk2.place(x=330, y=60)
+atk3 = tk.Radiobutton(root, value=2, variable=attack, text='多め')
+atk3.place(x=330, y=80)
+
+# コストのラジオボタン
+cost = tk.IntVar()
+cost.set(0)# 初期値value=0
+label = tk.Label(root, text="コスト")
+label.place(x=430, y=15)
+cost1 = tk.Radiobutton(root, value=0, variable=cost, text='何でも')
+cost1.place(x=430, y=40)
+cost2 = tk.Radiobutton(root, value=1, variable=cost, text='低コスト寄り(3以下4枚以上)')
+cost2.place(x=430, y=60)
+cost3 = tk.Radiobutton(root, value=2, variable=cost, text='高コスト寄り(5以上4枚以上)')
+cost3.place(x=430, y=80)
+cost4 = tk.Radiobutton(root, value=3, variable=cost, text='バランス')
+cost4.place(x=430, y=100)
+
+
+label = tk.Label(root, text="サプライ")
+label.place(x=10, y=200)
+
+txtBox = tk.Text()
+txtBox.configure(width=110,height=10)
+txtBox.place(x=10, y=230)
 
 #メインループ
 root.mainloop()
