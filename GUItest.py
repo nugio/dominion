@@ -10,11 +10,8 @@ def pushed(b):
 
 #rootウィンドウを作成
 root = tk.Tk()
-#rootウィンドウのタイトルを変える
 root.title("ドミニオン　サプライ生成")
-#rootウィンドウの大きさを320x240に
-root.geometry("800x450")
-
+root.geometry("800x380")
 
 def MakeSupply(optionDict):#サプライ生成のメイン関数
     
@@ -89,8 +86,6 @@ def MakeSupply(optionDict):#サプライ生成のメイン関数
                 txtBox.delete('1.0',tk.END)
             txtBox.insert(tk.END,'その組み合わせは無いみたい・・・')
             return            
-
-
 
     showSupply=[[],[],[],[]]
 
