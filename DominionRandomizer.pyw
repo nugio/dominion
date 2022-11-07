@@ -81,7 +81,7 @@ def MakeSupply(optionDict):#サプライ生成のメイン関数
                                 finish = True
         tryCount+=1
 
-        if tryCount>10000:
+        if tryCount>50000:
             if txtBox.get('1.0',tk.END):
                 txtBox.delete('1.0',tk.END)
             txtBox.insert(tk.END,'その組み合わせは無いみたい・・・')
